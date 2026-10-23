@@ -1,0 +1,12 @@
+out
+out-test
+dist
+LICENSE
+tsconfig.json
+tsconfig.*.json
+openspec
+.claude
+.agents
+.cursor
+spec.md
+.uv-cache

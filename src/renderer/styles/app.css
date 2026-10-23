@@ -1,0 +1,313 @@
+:root {
+  --toolbar-height: 40px;
+  --header-height: 32px;
+  --scrollbar-height: 14px;
+  --bg: #f5f6f7;
+  --surface: #ffffff;
+  --border: #d9dde1;
+  --text: #1f2328;
+  --muted: #687078;
+  --accent: #2f6fde;
+  --danger: #c4314b;
+  --hover: rgba(0, 0, 0, 0.06);
+  --input-bg: #ffffff;
+  --scrollbar-thumb: #b5bcc4;
+  --paused-bg: #fff4d6;
+  --paused-text: #8a5a00;
+  --dragging-bg: #e8f0fd;
+  color-scheme: light dark;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Noto Sans JP', 'Segoe UI', sans-serif;
+  font-size: 13px;
+  color: var(--text);
+  background: var(--bg);
+}
+
+/* OS のダークモードに追従する(シェルUIのみ。カラムビューには何もしない) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #15181c;
+    --surface: #1e2227;
+    --border: #353b42;
+    --text: #e6e8eb;
+    --muted: #9aa3ad;
+    --accent: #6b9cf0;
+    --danger: #f07087;
+    --hover: rgba(255, 255, 255, 0.08);
+    --input-bg: #15181c;
+    --scrollbar-thumb: #4a525b;
+    --paused-bg: #3a3020;
+    --paused-text: #f0c46b;
+    --dragging-bg: #23324a;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  padding: 2px 6px;
+  cursor: pointer;
+}
+
+button:hover:not(:disabled) {
+  background: var(--hover);
+}
+
+input {
+  color: var(--text);
+  background: var(--input-bg);
+}
+
+button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.toolbar {
+  height: var(--toolbar-height);
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 12px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  /* macOS のウィンドウをツールバーでドラッグ移動できるようにする */
+  -webkit-app-region: drag;
+}
+
+.toolbar button,
+.toolbar input {
+  -webkit-app-region: no-drag;
+}
+
+.app-name {
+  font-weight: 600;
+}
+
+.add-column {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.add-column input {
+  width: 280px;
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font: inherit;
+}
+
+.add-column button[type='submit'] {
+  border-color: var(--border);
+}
+
+.settings-dialog {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  white-space: nowrap;
+}
+
+.settings-label {
+  font-weight: 600;
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.settings-field {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--muted);
+}
+
+.settings-field input {
+  width: 64px;
+  padding: 3px 6px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font: inherit;
+}
+
+.settings-dialog button {
+  border-color: var(--border);
+  -webkit-app-region: no-drag;
+}
+
+.settings-error {
+  color: var(--danger);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.add-column-error {
+  color: var(--danger);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.add-column + button,
+.list-picker-bar button {
+  border-color: var(--border);
+}
+
+.list-picker-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  white-space: nowrap;
+}
+
+.list-picker-hint {
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.toolbar-actions {
+  margin-left: auto;
+  display: flex;
+  flex: none;
+  gap: 2px;
+}
+
+.header-band {
+  height: var(--header-height);
+  flex: none;
+  overflow: hidden;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.header-track {
+  display: flex;
+  height: 100%;
+  will-change: transform;
+}
+
+.column-header {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 4px 0 8px;
+  border-right: 1px solid var(--border);
+  background: var(--surface);
+  cursor: grab;
+  touch-action: none;
+}
+
+.column-header.paused {
+  background: var(--paused-bg);
+}
+
+/* ドラッグ中であることが分かるよう、持ち上げたように表示する */
+.column-header.dragging {
+  position: relative;
+  z-index: 1;
+  background: var(--dragging-bg);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  cursor: grabbing;
+}
+
+.column-header button {
+  cursor: pointer;
+}
+
+.column-title-input {
+  flex: 1;
+  min-width: 0;
+  padding: 2px 6px;
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  font: inherit;
+  font-weight: 600;
+}
+
+.column-paused-badge {
+  flex: none;
+  padding: 0 6px;
+  border-radius: 8px;
+  font-size: 11px;
+  color: var(--paused-text);
+  border: 1px solid currentColor;
+}
+
+.column-title {
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.column-updated {
+  flex: none;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.column-actions {
+  margin-left: auto;
+  flex: none;
+  display: flex;
+}
+
+.column-area {
+  flex: 1;
+  position: relative;
+  min-height: 0;
+}
+
+.empty {
+  margin: 48px auto;
+  text-align: center;
+  color: var(--muted);
+}
+
+.hscroll {
+  height: var(--scrollbar-height);
+  flex: none;
+  overflow-x: auto;
+  overflow-y: hidden;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+}
+
+/* macOS のオーバーレイスクロールバーでも常に表示する */
+.hscroll::-webkit-scrollbar {
+  height: 10px;
+}
+
+.hscroll::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 5px;
+}
